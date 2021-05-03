@@ -38,8 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.cyan,
       drawer: Drawer(),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.cyan,
         onPressed: () {
           setState(() {
             length = 0;
@@ -50,33 +52,36 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       appBar: AppBar(
         title: Text('Poke App'),
-        elevation: 5,
-        //backgroundColor: Colors.red,
+        elevation: 10,
+        backgroundColor: Colors.cyan,
         centerTitle: true,
       ),
       body: length != 0
-          ? GridView.builder(
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-              ),
-              itemCount: pokeHub.pokemon.length,
-              itemBuilder: (BuildContext ctx, index) {
-                Pokemon dataItem = pokeHub.pokemon[index];
-                // print(pokeHub.pokemon[index]);
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => DetailsScreen(
-                          pokemon: dataItem,
-                        ),
-                      ),
+          ? Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              child: GridView.builder(
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 2,
+                  ),
+                  itemCount: pokeHub.pokemon.length,
+                  itemBuilder: (BuildContext ctx, index) {
+                    var pokemon = pokeHub.pokemon[index];
+                    // print(pokeHub.pokemon[index]);
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => DetailsScreen(
+                              pokemon: pokemon,
+                            ),
+                          ),
+                        );
+                      },
+                      child: buildCard(pokemon: pokemon),
                     );
-                  },
-                  child: buildCard(dataItem: dataItem),
-                );
-              })
+                  }),
+            )
           : Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -92,24 +97,34 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildCard({@required var dataItem}) {
-    return Card(
-      color: Colors.grey[900],
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.network(
-            dataItem.img,
-            fit: BoxFit.cover,
+  Widget buildCard({@required var pokemon}) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Hero(
+        tag: pokemon.name,
+        child: Card(
+          elevation: 15,
+          color: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(30.0),
           ),
-          SizedBox(
-            height: 30,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.network(
+                pokemon.img,
+                fit: BoxFit.cover,
+              ),
+              SizedBox(
+                height: 30,
+              ),
+              Text(
+                '${pokemon.name}',
+                style: TextStyle(fontSize: 32, color: Colors.black),
+              ),
+            ],
           ),
-          Text(
-            '${dataItem.name}',
-            style: TextStyle(fontSize: 32),
-          ),
-        ],
+        ),
       ),
     );
   }
